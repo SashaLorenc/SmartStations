@@ -1,51 +1,13 @@
 using HarmonyLib;
 using SmartStations.Stations;
-using SmartStations.UI;
 
 namespace SmartStations.Patches
 {
-    /// <summary>Four, fonderie, raffinerie... : ouverture de la fenêtre et produits gardés dans la station.</summary>
+    /// <summary>Four, fonderie, raffinerie... : produits gardés dans la station.</summary>
     internal static class SmelterPatches
     {
         /// <summary>Vrai pendant que le jeu vide la station détruite : on laisse alors tout tomber par terre.</summary>
         private static bool _dropping;
-
-        private static Smelter SmelterOf(Switch sw)
-        {
-            Smelter smelter = sw.GetComponentInParent<Smelter>();
-            if (smelter == null) return null;
-            if (sw != smelter.m_addOreSwitch && sw != smelter.m_addWoodSwitch && sw != smelter.m_emptyOreSwitch) return null;
-            return smelter;
-        }
-
-        /// <summary>E sur une station : ouvre la fenêtre. Maj + E garde l'action d'origine du jeu.</summary>
-        [HarmonyPatch(typeof(Switch), nameof(Switch.Interact))]
-        private static class SwitchInteract
-        {
-            private static bool Prefix(Switch __instance, Humanoid character, bool hold, bool alt, ref bool __result)
-            {
-                if (hold || alt || character == null || character != Player.m_localPlayer) return true;
-                Smelter smelter = SmelterOf(__instance);
-                if (smelter == null) return true;
-                StationView view = StationRegistry.Get(smelter);
-                if (!StationRegistry.IsEnabled(view)) return true;
-
-                StationPanel.Open(view);
-                __result = true;
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(Switch), nameof(Switch.GetHoverText))]
-        private static class SwitchHover
-        {
-            private static void Postfix(Switch __instance, ref string __result)
-            {
-                Smelter smelter = SmelterOf(__instance);
-                if (smelter == null || !StationRegistry.IsEnabled(StationRegistry.Get(smelter))) return;
-                __result = HoverText.Rewrite(__result);
-            }
-        }
 
         /// <summary>Produit fini : rangé dans la case Produits au lieu d'apparaître par terre (côté propriétaire).</summary>
         [HarmonyPatch(typeof(Smelter), "Spawn")]

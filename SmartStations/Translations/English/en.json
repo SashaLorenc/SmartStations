@@ -13,5 +13,6 @@
   "smartstations_status_working": "Working",
   "smartstations_status_nofuel": "Out of fuel",
   "smartstations_status_nowind": "No wind",
-  "smartstations_status_smoke": "Smoke blocked"
+  "smartstations_status_smoke": "Smoke blocked",
+  "smartstations_status_burning": "Take the cooked food before it burns"
 }

@@ -17,7 +17,7 @@ namespace SmartStations
     {
         public const string ModGuid = "sashalorenc.SmartStations";
         public const string ModName = "Smart Stations";
-        public const string ModVersion = "0.1.0";
+        public const string ModVersion = "1.0.0";
 
         public static Plugin Instance { get; private set; }
         public static ManualLogSource Log { get; private set; }
@@ -25,6 +25,8 @@ namespace SmartStations
         // [Stations]
         public static ConfigEntry<bool> EnableSmelters;
         public static ConfigEntry<bool> EnableFermenters;
+        public static ConfigEntry<bool> EnableCooking;
+        public static ConfigEntry<bool> EnableCollectors;
         public static ConfigEntry<float> MaxDistance;
 
         // [Produits]
@@ -67,6 +69,10 @@ namespace SmartStations
                 "Interface à emplacements pour les stations de type four : four à charbon, fonderie, haut fourneau, raffinerie d'eitr, moulin à vent, rouet...");
             EnableFermenters = Config.Bind("Stations", "Fermentateur", true,
                 "Interface à emplacements pour le fermentateur.");
+            EnableCooking = Config.Bind("Stations", "Cuisson", true,
+                "Interface à emplacements pour le grill, la broche et le four à pain.");
+            EnableCollectors = Config.Bind("Stations", "RucheEtSeve", true,
+                "Fenêtre (case Produits) pour la ruche et le collecteur de sève.");
             MaxDistance = Config.Bind("Stations", "DistanceMax", 6f,
                 new ConfigDescription("La fenêtre se ferme quand tu t'éloignes de la station de plus de cette distance (m).",
                     new AcceptableValueRange<float>(3f, 20f)));

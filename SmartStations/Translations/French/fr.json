@@ -13,5 +13,6 @@
   "smartstations_status_working": "En cours",
   "smartstations_status_nofuel": "Plus de combustible",
   "smartstations_status_nowind": "Pas de vent",
-  "smartstations_status_smoke": "Fumée bloquée"
+  "smartstations_status_smoke": "Fumée bloquée",
+  "smartstations_status_burning": "Retire les plats cuits avant qu'ils brûlent"
 }

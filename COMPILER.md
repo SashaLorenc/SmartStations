@@ -22,9 +22,9 @@ dotnet build SmartStations/SmartStations.csproj -c Release
 
 La DLL est copiée automatiquement dans `BepInEx/plugins/SmartStations/` de ton profil r2modman.
 
-## Tester la version 0.1.0
+## Tester (fours et fermentateur)
 
-Au lancement, `BepInEx/LogOutput.log` doit afficher `Smart Stations 0.1.0 chargé.`
+Au lancement, `BepInEx/LogOutput.log` doit afficher `Smart Stations 1.0.0 chargé.`
 
 1. **Fonderie** : approche-toi, le survol affiche « [E] Ouvrir » et « [Maj + E] » + l'action d'origine. Appuie sur **E** : ton inventaire s'ouvre avec la fenêtre de la station au-dessus.
 2. **Ajouter** : clique sur du minerai de cuivre dans ton inventaire, puis clique sur la zone **Entrée** : il y entre (jusqu'à 10). Essaie aussi le **clic droit** sur du charbon dans l'inventaire : il va dans **Combustible**. Boutons **Tout ajouter** et **Remplir**.
@@ -35,11 +35,32 @@ Au lancement, `BepInEx/LogOutput.log` doit afficher `Smart Stations 0.1.0 charg�
 7. **Fermentateur** : une seule entrée ; pendant la fermentation la ligne d'état affiche le pourcentage et le temps restant, puis les hydromels apparaissent dans **Produits**.
 8. **Détruire** une fonderie qui contient des produits : tout tombe par terre, rien n'est perdu.
 
+## Tester la version 1.0.0 (cuisson, ruche, sève)
+
+1. **Grill** : allume un feu, pose un grill dessus, **E** : ta viande crue va dans **Entrée** (clic droit dans l'inventaire ou glisser-déposer). La ligne d'état donne le pourcentage et le temps restant. Une fois cuite, elle passe dans **Produits** et la ligne d'état te prévient en orange qu'il faut la retirer avant qu'elle brûle. Prendre un plat cuit donne de la compétence Cuisine.
+2. **Four à pain** : même chose avec en plus la case **Combustible** (bois). Le bouton **Remplissage auto** y existe mais ne remet que du bois, jamais de nourriture.
+3. **Ruche** : **E** ouvre une fenêtre avec seulement la case **Produits** (le miel), et une ligne d'état (bon biome, assez d'espace, nuit, nombre de pots prêts). Clic sur le miel : il arrive dans l'inventaire.
+4. **Collecteur de sève** (posé sur une racine ancienne) : pareil, avec la sève.
+5. **Maj + E** sur chacune de ces stations : action normale du jeu.
+
+## Créer le zip Thunderstore
+
+Les fichiers de la page du mod sont dans `Thunderstore/` (manifest.json, README.md en anglais, CHANGELOG.md, icon.png 256x256).
+
+1. Pour une nouvelle version : change `version_number` dans `Thunderstore/manifest.json` **et** `ModVersion` dans `SmartStations/Plugin.cs` (les deux doivent être identiques, le script vérifie), et ajoute une section dans `CHANGELOG.md`.
+2. Depuis la racine du dépôt :
+   ```
+   powershell -ExecutionPolicy Bypass -File package.ps1
+   ```
+3. Le zip est créé dans `release/SmartStations-<version>.zip` (dossier ignoré par git). Envoie-le sur https://thunderstore.io/c/valheim/create/ comme pour Smart Chest.
+
+Contenu du zip : `manifest.json`, `README.md`, `CHANGELOG.md`, `icon.png` à la racine, et `plugins/SmartStations.dll` + `plugins/Translations/`.
+
 ## Réglages
 
 Dans `BepInEx/config/sashalorenc.SmartStations.cfg` (créé au premier lancement) :
 
-- `[Stations]` : `Fours`, `Fermentateur` (activer la fenêtre), `DistanceMax`.
+- `[Stations]` : `Fours`, `Fermentateur`, `Cuisson`, `RucheEtSeve` (activer la fenêtre), `DistanceMax`.
 - `[Produits]` : `GarderDansLaStation` (true/false), `Capacite` (100 par défaut ; au-delà ça tombe par terre).
 - `[RemplissageAuto]` : `Autorise` (interrupteur général), `ActifParDefaut`, `Rayon` (10 m), `Intervalle` (5 s).
 
@@ -47,7 +68,7 @@ Dans `BepInEx/config/sashalorenc.SmartStations.cfg` (créé au premier lancement
 
 - Le remplissage auto ne puise que dans les coffres posés par un joueur, auxquels tu as accès, que personne n'a ouverts, et dont ta partie est « propriétaire » réseau (en solo : tous). C'est ce qui empêche toute duplication sur serveur.
 - Si tu désinstalles le mod, les produits encore gardés dans une station sont perdus : vide-les avant.
-- Pas encore géré : manette, stations de cuisson (grill, four à pain), ruche, collecteur de sève.
+- Pas encore géré : la manette dans la fenêtre.
 
 ## En cas d'erreur
 

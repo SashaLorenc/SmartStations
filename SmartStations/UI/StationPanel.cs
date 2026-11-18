@@ -36,6 +36,10 @@ namespace SmartStations.UI
         private static Text _outputCount;
         private static GameObject _autoFillButton;
         private static readonly List<GameObject> _fuelWidgets = new List<GameObject>();
+        private static readonly List<GameObject> _inputWidgets = new List<GameObject>();
+        private static readonly List<GameObject> _outputWidgets = new List<GameObject>();
+        private static readonly Dictionary<GameObject, float> _outputBaseX = new Dictionary<GameObject, float>();
+        private const float OutputX = 384f;
         private static readonly List<SlotView> _inputSlots = new List<SlotView>();
         private static readonly List<SlotView> _fuelSlots = new List<SlotView>();
         private static readonly List<SlotView> _outputSlots = new List<SlotView>();
@@ -76,6 +80,9 @@ namespace SmartStations.UI
             _fuelSlots.Clear();
             _outputSlots.Clear();
             _fuelWidgets.Clear();
+            _inputWidgets.Clear();
+            _outputWidgets.Clear();
+            _outputBaseX.Clear();
 
             Transform parent = gui.m_container != null ? gui.m_container.parent : gui.transform;
             _panel = GUIManager.Instance.CreateWoodpanel(
@@ -94,16 +101,17 @@ namespace SmartStations.UI
             _autoFillButton = UiKit.AddButton(root, "", Width - 250f, 14f, 230f, 34f, OnToggleAutoFill);
 
             // Entrée : 3 x 2 cases
-            BuildColumn(SlotKind.Input, "$smartstations_input", 20f, 3, 2, _inputSlots, out _inputCount, null);
-            UiKit.AddButton(root, "$smartstations_add_all", 20f, ButtonsTop, 222f, 32f, () => AddAllFromInventory(SlotKind.Input));
+            BuildColumn(SlotKind.Input, "$smartstations_input", 20f, 3, 2, _inputSlots, out _inputCount, _inputWidgets);
+            _inputWidgets.Add(UiKit.AddButton(root, "$smartstations_add_all", 20f, ButtonsTop, 222f, 32f, () => AddAllFromInventory(SlotKind.Input)));
 
             // Combustible : 1 case
             BuildColumn(SlotKind.Fuel, "$smartstations_fuel", 272f, 1, 1, _fuelSlots, out _fuelCount, _fuelWidgets);
             _fuelWidgets.Add(UiKit.AddButton(root, "$smartstations_fill", 257f, ButtonsTop, 112f, 32f, () => AddAllFromInventory(SlotKind.Fuel)));
 
             // Produits : 3 x 2 cases
-            BuildColumn(SlotKind.Output, "$smartstations_output", 384f, 3, 2, _outputSlots, out _outputCount, null);
-            UiKit.AddButton(root, "$smartstations_take_all", 384f, ButtonsTop, 222f, 32f, TakeAllOutputs);
+            BuildColumn(SlotKind.Output, "$smartstations_output", OutputX, 3, 2, _outputSlots, out _outputCount, _outputWidgets);
+            _outputWidgets.Add(UiKit.AddButton(root, "$smartstations_take_all", OutputX, ButtonsTop, 222f, 32f, TakeAllOutputs));
+            foreach (GameObject go in _outputWidgets) _outputBaseX[go] = ((RectTransform)go.transform).anchoredPosition.x;
 
             _status = UiKit.AddText(root, "", 20f, 300f, Width - 40f, 26f, 17, Color.white);
             Text hint = UiKit.AddText(root, Localization.instance.Localize("$smartstations_hint"), 20f, 326f, Width - 40f, 40f, 14, HintColor);
@@ -163,6 +171,15 @@ namespace SmartStations.UI
 
             _title.text = st.Name;
 
+            // Sans entrée (ruche, sève) : la case Produits prend la place de gauche
+            foreach (GameObject go in _inputWidgets) go.SetActive(st.HasInput);
+            float shift = st.HasInput ? 0f : 20f - OutputX;
+            foreach (GameObject go in _outputWidgets)
+            {
+                var rt = (RectTransform)go.transform;
+                rt.anchoredPosition = new Vector2(_outputBaseX[go] + shift, rt.anchoredPosition.y);
+            }
+
             Fill(_inputSlots, st.GetInputs());
             _inputCount.text = st.GetInputCount() + " / " + st.InputCapacity;
 
@@ -183,7 +200,7 @@ namespace SmartStations.UI
 
             _status.text = st.GetStatus();
 
-            _autoFillButton.SetActive(Plugin.AutoFillAllowed.Value);
+            _autoFillButton.SetActive(Plugin.AutoFillAllowed.Value && st.SupportsAutoFill);
             UiKit.SetButtonText(_autoFillButton, Localization.instance.Localize(
                 st.AutoFill ? "$smartstations_autofill_on" : "$smartstations_autofill_off"));
         }

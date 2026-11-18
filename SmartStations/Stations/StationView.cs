@@ -34,6 +34,12 @@ namespace SmartStations.Stations
         public abstract string Name { get; }
 
         public abstract bool HasFuel { get; }
+
+        /// <summary>False pour les stations sans entrée (ruche, collecteur de sève) : seule la case Produits s'affiche.</summary>
+        public virtual bool HasInput => true;
+
+        /// <summary>Le bouton Remplissage auto a-t-il un sens pour cette station ?</summary>
+        public virtual bool SupportsAutoFill => true;
         public abstract int InputCapacity { get; }
         public abstract int FuelCapacity { get; }
 
@@ -65,8 +71,13 @@ namespace SmartStations.Stations
 
         public void RequestTake(SlotKind slot, string prefab, int count)
         {
-            if (IsValid) View.InvokeRPC(StationRpc.Take, (int)slot, prefab ?? "", count);
+            if (!IsValid) return;
+            OnRequestTake(Player.m_localPlayer, slot, prefab, count);
+            View.InvokeRPC(StationRpc.Take, (int)slot, prefab ?? "", count);
         }
+
+        /// <summary>Côté joueur, au moment où il reprend des objets (ex. compétence Cuisine).</summary>
+        protected virtual void OnRequestTake(Player player, SlotKind slot, string prefab, int count) { }
 
         public bool AutoFill => IsValid && Zdo.GetBool(AutoFillKey, Plugin.AutoFillDefault.Value);
 
