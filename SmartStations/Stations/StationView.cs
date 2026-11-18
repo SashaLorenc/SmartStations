@@ -82,7 +82,7 @@ namespace SmartStations.Stations
 
         public abstract int FreeInputOwner();
         public abstract int FreeFuelOwner();
-        public abstract void InsertInputOwner(string prefab, int count);
+        public abstract void InsertInputOwner(string prefab, int count, bool cheated);
         public abstract void InsertFuelOwner(int count);
 
         // ---------- Ajouts en cours (le ZDO met un instant à revenir du propriétaire) ----------

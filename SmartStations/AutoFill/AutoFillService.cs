@@ -34,7 +34,8 @@ namespace SmartStations.AutoFill
 
             if (freeFuel > 0)
             {
-                int got = TakeFromChests(chests, station.FuelPrefab, freeFuel);
+                bool cheatedFuel;
+                int got = TakeFromChests(chests, station.FuelPrefab, freeFuel, out cheatedFuel);
                 if (got > 0) station.InsertFuelOwner(got);
             }
 
@@ -42,9 +43,10 @@ namespace SmartStations.AutoFill
             {
                 foreach (string prefab in station.InputPrefabs)
                 {
-                    int got = TakeFromChests(chests, prefab, freeInput);
+                    bool cheated;
+                    int got = TakeFromChests(chests, prefab, freeInput, out cheated);
                     if (got <= 0) continue;
-                    station.InsertInputOwner(prefab, got);
+                    station.InsertInputOwner(prefab, got, cheated);
                     freeInput -= got;
                     if (freeInput <= 0) break;
                 }
@@ -52,8 +54,9 @@ namespace SmartStations.AutoFill
         }
 
         /// <summary>Retire jusqu'à count objets de ce prefab dans les coffres. Renvoie le nombre retiré.</summary>
-        private static int TakeFromChests(List<Container> chests, string prefab, int count)
+        private static int TakeFromChests(List<Container> chests, string prefab, int count, out bool cheated)
         {
+            cheated = false;
             if (string.IsNullOrEmpty(prefab) || count <= 0) return 0;
             int taken = 0;
             foreach (Container c in chests)
@@ -66,7 +69,10 @@ namespace SmartStations.AutoFill
                     if (taken >= count) return taken;
                     if (ItemUtil.PrefabName(item) != prefab) continue;
                     int n = Mathf.Min(item.m_stack, count - taken);
-                    if (inv.RemoveItem(item, n)) taken += n;
+                    bool itemCheated = item.m_cheated;
+                    if (!inv.RemoveItem(item, n)) continue;
+                    taken += n;
+                    cheated |= itemCheated;
                 }
             }
             return taken;

@@ -50,7 +50,9 @@ namespace SmartStations.Stations
         public override List<ItemStack> GetInputs()
         {
             var list = new List<ItemStack>();
-            if (IsFermenting) list.Add(new ItemStack(_fermenter.GetContent(), 1));
+            if (!IsFermenting) return list;
+            Fermenter.ItemConversion conv = _fermenter.GetItemConversion(_fermenter.GetContent());
+            if (conv != null && conv.m_from != null) list.Add(new ItemStack(conv.m_from.gameObject.name, 1));
             return list;
         }
 
@@ -107,7 +109,7 @@ namespace SmartStations.Stations
             string name = item.m_shared.m_name;
             Sprite icon = item.GetIcon();
             if (!player.GetInventory().RemoveOneItem(item)) return 0;
-            View.InvokeRPC("RPC_AddItem", prefab);
+            View.InvokeRPC("RPC_AddItem", prefab.GetStableHashCode(), item.m_cheated);
             RememberInput(1);
             player.Message(MessageHud.MessageType.TopLeft, "$msg_added " + name, 1, icon);
             return 1;
@@ -120,22 +122,22 @@ namespace SmartStations.Stations
         public override ItemStack TakeOwner(SlotKind slot, string prefab, int count)
         {
             if (count <= 0) return null;
-            string content = _fermenter.GetContent();
-            if (string.IsNullOrEmpty(content)) return null;
+            // Depuis Valheim 1.0 le contenu est le hash du nom du prefab
+            Fermenter.ItemConversion conv = _fermenter.GetItemConversion(_fermenter.GetContent());
+            if (conv == null) return null;
 
             if (slot == SlotKind.Input)
             {
                 // On retire l'objet en cours de fermentation : la fermentation est annulée
-                if (!IsFermenting || content != prefab) return null;
+                if (!IsFermenting || conv.m_from == null || conv.m_from.gameObject.name != prefab) return null;
                 ClearOwner();
-                return new ItemStack(content, 1);
+                return new ItemStack(prefab, 1);
             }
 
             if (slot == SlotKind.Output)
             {
                 if (!IsReady) return null;
-                Fermenter.ItemConversion conv = _fermenter.GetItemConversion(content);
-                if (conv == null || conv.m_to == null) return null;
+                if (conv.m_to == null) return null;
                 ClearOwner();
                 _fermenter.m_tapEffects.Create(_fermenter.transform.position, _fermenter.transform.rotation);
                 return new ItemStack(conv.m_to.gameObject.name, conv.m_producedItems);
@@ -145,8 +147,9 @@ namespace SmartStations.Stations
 
         private void ClearOwner()
         {
-            Zdo.Set(ZDOVars.s_content, "");
+            Zdo.Set(ZDOVars.s_content, 0);
             Zdo.Set(ZDOVars.s_startTime, 0L);
+            Zdo.Set(ZDOVars.s_cheatedQueued, false);
         }
 
         public override int FreeInputOwner()
@@ -158,11 +161,11 @@ namespace SmartStations.Stations
 
         public override int FreeFuelOwner() => 0;
 
-        public override void InsertInputOwner(string prefab, int count)
+        public override void InsertInputOwner(string prefab, int count, bool cheated)
         {
             if (count <= 0) return;
             // Méthode du jeu : vérifie que le fermentateur est vide et que l'objet est accepté
-            _fermenter.RPC_AddItem(0L, prefab);
+            _fermenter.RPC_AddItem(0L, prefab.GetStableHashCode(), cheated);
         }
 
         public override void InsertFuelOwner(int count) { }

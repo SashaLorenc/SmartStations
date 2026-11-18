@@ -109,8 +109,9 @@ namespace SmartStations.Stations
             string prefab = ItemUtil.PrefabName(item);
             string name = item.m_shared.m_name;
             Sprite icon = item.GetIcon();
+            bool cheated = item.m_cheated;
             if (!player.GetInventory().RemoveItem(item, n)) return 0;
-            for (int i = 0; i < n; i++) View.InvokeRPC("RPC_AddOre", prefab);
+            for (int i = 0; i < n; i++) View.InvokeRPC("RPC_AddOre", prefab, cheated);
             RememberInput(queued + n);
             player.Message(MessageHud.MessageType.TopLeft, "$msg_added " + name, n, icon);
             return n;
@@ -208,10 +209,10 @@ namespace SmartStations.Stations
             return Mathf.Max(0, Mathf.FloorToInt(_smelter.m_maxFuel - _smelter.GetFuel()));
         }
 
-        public override void InsertInputOwner(string prefab, int count)
+        public override void InsertInputOwner(string prefab, int count, bool cheated)
         {
             if (count <= 0 || !_smelter.IsItemAllowed(prefab)) return;
-            for (int i = 0; i < count; i++) _smelter.QueueOre(prefab);
+            for (int i = 0; i < count; i++) _smelter.QueueOre(prefab, cheated);
             _smelter.m_oreAddedEffects.Create(_smelter.transform.position, _smelter.transform.rotation);
         }
 
