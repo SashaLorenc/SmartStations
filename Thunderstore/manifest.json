@@ -1,0 +1,10 @@
+{
+  "name": "SmartStations",
+  "version_number": "0.1.0",
+  "website_url": "https://github.com/SashaLorenc/SmartStations",
+  "description": "Smelters, kilns, refineries, windmills, spinning wheels and fermenters open like a chest: input, fuel and product slots. Optional auto fill from nearby chests.",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2202",
+    "ValheimModding-Jotunn-2.30.2"
+  ]
+}

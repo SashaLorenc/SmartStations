@@ -1,0 +1,18 @@
+<Project>
+  <!--
+    Copie ce fichier en "Environment.props" (même dossier) et adapte les chemins.
+    Environment.props n'est pas versionné (.gitignore) : chacun garde ses chemins.
+  -->
+  <PropertyGroup>
+    <!-- Dossier d'installation de Valheim (celui qui contient valheim.exe) -->
+    <ValheimDir>C:\Program Files (x86)\Steam\steamapps\common\Valheim</ValheimDir>
+
+    <!-- Dossier BepInEx utilisé pour jouer.
+         Avec r2modman : %AppData%\r2modmanPlus-local\Valheim\profiles\Default\BepInEx
+         Installation manuelle : $(ValheimDir)\BepInEx -->
+    <BepInExDir>C:\Users\TON_NOM\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\Default\BepInEx</BepInExDir>
+
+    <!-- Jotunn.dll (installé via r2modman, dossier ValheimModding-Jotunn) -->
+    <JotunnDll>$(BepInExDir)\plugins\ValheimModding-Jotunn\Jotunn.dll</JotunnDll>
+  </PropertyGroup>
+</Project>

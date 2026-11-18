@@ -1,0 +1,17 @@
+{
+  "smartstations_open": "Open",
+  "smartstations_input": "Input",
+  "smartstations_fuel": "Fuel",
+  "smartstations_output": "Products",
+  "smartstations_add_all": "Add all",
+  "smartstations_fill": "Fill",
+  "smartstations_take_all": "Take all",
+  "smartstations_autofill_on": "Auto fill: ON",
+  "smartstations_autofill_off": "Auto fill: OFF",
+  "smartstations_hint": "Add: drag an item from your inventory onto the window, or right-click it. Take back: click a slot (all) or right-click (one).",
+  "smartstations_status_idle": "Waiting",
+  "smartstations_status_working": "Working",
+  "smartstations_status_nofuel": "Out of fuel",
+  "smartstations_status_nowind": "No wind",
+  "smartstations_status_smoke": "Smoke blocked"
+}

@@ -1,0 +1,17 @@
+{
+  "smartstations_open": "Ouvrir",
+  "smartstations_input": "Entrée",
+  "smartstations_fuel": "Combustible",
+  "smartstations_output": "Produits",
+  "smartstations_add_all": "Tout ajouter",
+  "smartstations_fill": "Remplir",
+  "smartstations_take_all": "Tout prendre",
+  "smartstations_autofill_on": "Remplissage auto : OUI",
+  "smartstations_autofill_off": "Remplissage auto : NON",
+  "smartstations_hint": "Ajouter : glisse un objet de l'inventaire sur la fenêtre, ou clic droit dessus. Reprendre : clic sur une case (tout) ou clic droit (un seul).",
+  "smartstations_status_idle": "En attente",
+  "smartstations_status_working": "En cours",
+  "smartstations_status_nofuel": "Plus de combustible",
+  "smartstations_status_nowind": "Pas de vent",
+  "smartstations_status_smoke": "Fumée bloquée"
+}
