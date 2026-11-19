@@ -10,6 +10,12 @@ Mod Valheim (BepInEx + Jötunn) : les stations de production s'ouvrent comme un 
 
 Voir `COMPILER.md` pour compiler, tester et créer le zip Thunderstore (`package.ps1`).
 
+## Fabrication
+
+- Les stations de fabrication (établi, forge, chaudron, table d'artisan...) utilisent aussi les matériaux des coffres à moins de 15 m de la station. Un **+N** vert à côté de chaque matériau indique ce que contiennent les coffres.
+- La construction (marteau, houe, cultivateur) utilise les coffres à moins de 15 m du joueur.
+- À côté du menu de fabrication : un champ **Rechercher** et un bouton par catégorie présente à la station. Avec Smart Chest installé, ce sont ses catégories (avec tes réglages d'objets).
+
 ## Utilisation
 
 - **E** sur une station : ouvre la fenêtre (avec ton inventaire). **Maj + E** garde l'action d'origine du jeu.
@@ -24,6 +30,7 @@ Voir `COMPILER.md` pour compiler, tester et créer le zip Thunderstore (`package
 | `Stations/` | Vue commune d'une station (`StationView`), une classe par type de station du jeu (`SmelterStation`, `FermenterStation`, `CookingStationView`, `CollectorStation` pour la ruche et la sève), produits gardés dans le ZDO (`OutputStore`), RPC réseau (`StationRpc`). |
 | `Patches/` | Patchs Harmony : ouverture avec E, texte de survol, produits gardés, clic droit dans l'inventaire. |
 | `AutoFill/` | Remplissage automatique depuis les coffres proches. |
+| `Crafting/` | Fabrication et construction depuis les coffres proches, catégories des recettes (intégrées ou Smart Chest), détection des mods concurrents. |
 | `UI/` | Fenêtre de la station et ses cases. |
 
 Pour ajouter un nouveau type de station : une classe qui hérite de `StationView`, un `Get(...)` dans `StationRegistry` et un patch d'ouverture.

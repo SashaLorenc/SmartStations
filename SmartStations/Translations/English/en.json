@@ -14,5 +14,13 @@
   "smartstations_status_nofuel": "Out of fuel",
   "smartstations_status_nowind": "No wind",
   "smartstations_status_smoke": "Smoke blocked",
-  "smartstations_status_burning": "Take the cooked food before it burns"
+  "smartstations_status_burning": "Take the cooked food before it burns",
+  "smartstations_search": "Search...",
+  "smartstations_cat_all": "All",
+  "smartstations_cat_weapons": "Weapons",
+  "smartstations_cat_armor": "Armor",
+  "smartstations_cat_tools": "Tools",
+  "smartstations_cat_ammo": "Ammo",
+  "smartstations_cat_food": "Food and potions",
+  "smartstations_cat_other": "Other"
 }

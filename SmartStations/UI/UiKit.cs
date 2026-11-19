@@ -33,6 +33,36 @@ namespace SmartStations.UI
             return go;
         }
 
+        internal static InputField AddInput(Transform parent, string placeholder, float x, float y, float width, float height)
+        {
+            GameObject go = GUIManager.Instance.CreateInputField(
+                parent: parent,
+                anchorMin: new Vector2(0f, 1f),
+                anchorMax: new Vector2(0f, 1f),
+                position: Vector2.zero,
+                contentType: InputField.ContentType.Standard,
+                placeholderText: placeholder,
+                fontSize: 16,
+                width: width,
+                height: height);
+            Place(go, x, y, width, height);
+            InputField input = go.GetComponent<InputField>();
+            input.characterLimit = 32;
+            return input;
+        }
+
+        /// <summary>Vrai quand un champ de texte a le focus : on bloque alors les touches du jeu.</summary>
+        internal static bool IsTyping
+        {
+            get
+            {
+                UnityEngine.EventSystems.EventSystem es = UnityEngine.EventSystems.EventSystem.current;
+                if (es == null || es.currentSelectedGameObject == null) return false;
+                InputField input = es.currentSelectedGameObject.GetComponent<InputField>();
+                return input != null && input.isFocused;
+            }
+        }
+
         internal static void SetButtonText(GameObject button, string text)
         {
             if (button == null) return;

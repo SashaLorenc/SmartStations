@@ -24,7 +24,7 @@ La DLL est copiée automatiquement dans `BepInEx/plugins/SmartStations/` de ton 
 
 ## Tester (fours et fermentateur)
 
-Au lancement, `BepInEx/LogOutput.log` doit afficher `Smart Stations 1.0.0 chargé.`
+Au lancement, `BepInEx/LogOutput.log` doit afficher `Smart Stations <version> chargé.` (ex. 1.1.0)
 
 1. **Fonderie** : approche-toi, le survol affiche « [E] Ouvrir » et « [Maj + E] » + l'action d'origine. Appuie sur **E** : ton inventaire s'ouvre avec la fenêtre de la station au-dessus.
 2. **Ajouter** : clique sur du minerai de cuivre dans ton inventaire, puis clique sur la zone **Entrée** : il y entre (jusqu'à 10). Essaie aussi le **clic droit** sur du charbon dans l'inventaire : il va dans **Combustible**. Boutons **Tout ajouter** et **Remplir**.
@@ -42,6 +42,17 @@ Au lancement, `BepInEx/LogOutput.log` doit afficher `Smart Stations 1.0.0 charg�
 3. **Ruche** : **E** ouvre une fenêtre avec seulement la case **Produits** (le miel), et une ligne d'état (bon biome, assez d'espace, nuit, nombre de pots prêts). Clic sur le miel : il arrive dans l'inventaire.
 4. **Collecteur de sève** (posé sur une racine ancienne) : pareil, avec la sève.
 5. **Maj + E** sur chacune de ces stations : action normale du jeu.
+
+## Tester la version 1.1.0 (fabrication)
+
+1. **Établi depuis les coffres** : mets du bois dans un coffre à côté de l'établi et vide ton inventaire. Ouvre l'établi : les recettes en bois sont fabricables, et chaque matériau affiche un **+N** vert (ce qu'il y a dans les coffres). Fabrique : le bois est retiré du coffre.
+2. **Mélange** : avec 5 bois sur toi et 20 dans le coffre, une recette à 10 bois prend tes 5 et 5 dans le coffre.
+3. **Construction** : marteau en main près du coffre, une pièce en bois est constructible et affiche **+N**. Pose-la : le bois part du coffre.
+4. **Catégories** : à droite du menu de fabrication, un champ **Rechercher** et des boutons (Tout, Armes, Armures...). Seules les catégories présentes à la station apparaissent. Clique sur une catégorie, puis tape un nom (ex. « hache »). Pendant la saisie, E et Tab ne ferment pas l'inventaire.
+5. **Avec Smart Chest** : les boutons reprennent tes catégories Smart Chest. Le log affiche `Menu de fabrication : catégories de Smart Chest utilisées.`
+6. Si les boutons chevauchent quelque chose : `[Fabrication] PositionCategories` (Dessus, Dessous, Gauche, Droite) et `DecalageX / DecalageY`.
+
+Multijoueur : seuls les coffres dont ta partie est « propriétaire » réseau et que personne n'a ouverts sont utilisés (en solo : tous). Si un patch ne s'applique pas après une mise à jour du jeu, le log affiche `Patch ... impossible` : envoie-moi la ligne.
 
 ## Créer le zip Thunderstore
 
@@ -63,6 +74,7 @@ Dans `BepInEx/config/sashalorenc.SmartStations.cfg` (créé au premier lancement
 - `[Stations]` : `Fours`, `Fermentateur`, `Cuisson`, `RucheEtSeve` (activer la fenêtre), `DistanceMax`.
 - `[Produits]` : `GarderDansLaStation` (true/false), `Capacite` (100 par défaut ; au-delà ça tombe par terre).
 - `[RemplissageAuto]` : `Autorise` (interrupteur général), `ActifParDefaut`, `Rayon` (10 m), `Intervalle` (5 s).
+- `[Fabrication]` : `DepuisLesCoffres`, `ConstructionDepuisLesCoffres`, `Rayon` (15 m), `Categories`, `CategoriesSmartChest`, `PositionCategories`, `DecalageX`, `DecalageY`.
 
 ## Bon à savoir
 

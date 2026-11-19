@@ -11,13 +11,16 @@ namespace SmartStations
 {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInDependency(Main.ModGuid)]
+    // Smart Chest (optionnel) : ses catégories servent à trier le menu de fabrication
+    [BepInDependency(SmartChestGuid, BepInDependency.DependencyFlags.SoftDependency)]
     // Les RPC du mod (prendre un objet, activer le remplissage) doivent exister chez tout le monde
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     public class Plugin : BaseUnityPlugin
     {
         public const string ModGuid = "sashalorenc.SmartStations";
         public const string ModName = "Smart Stations";
-        public const string ModVersion = "1.0.0";
+        public const string ModVersion = "1.1.0";
+        public const string SmartChestGuid = "sashalorenc.SmartChest";
 
         public static Plugin Instance { get; private set; }
         public static ManualLogSource Log { get; private set; }
@@ -39,6 +42,16 @@ namespace SmartStations
         public static ConfigEntry<float> AutoFillRadius;
         public static ConfigEntry<float> AutoFillInterval;
 
+        // [Fabrication]
+        public static ConfigEntry<bool> CraftFromChests;
+        public static ConfigEntry<bool> BuildFromChests;
+        public static ConfigEntry<float> CraftRadius;
+        public static ConfigEntry<bool> CraftCategories;
+        public static ConfigEntry<bool> UseSmartChestCategories;
+        public static ConfigEntry<BarPlacement> FilterPlacement;
+        public static ConfigEntry<float> FilterOffsetX;
+        public static ConfigEntry<float> FilterOffsetY;
+
         private Harmony _harmony;
         private float _autoFillTimer;
 
@@ -49,9 +62,28 @@ namespace SmartStations
             BindConfig();
 
             _harmony = new Harmony(ModGuid);
-            _harmony.PatchAll(typeof(Plugin).Assembly);
+            PatchEach();
 
             Logger.LogInfo($"{ModName} {ModVersion} chargé.");
+        }
+
+        /// <summary>
+        /// Comme PatchAll, mais patch par patch : si une mise à jour du jeu casse un patch, seul celui-là
+        /// est perdu (avec un message dans le log) au lieu de tout le mod.
+        /// </summary>
+        private void PatchEach()
+        {
+            foreach (System.Type type in AccessTools.GetTypesFromAssembly(typeof(Plugin).Assembly))
+            {
+                try
+                {
+                    _harmony.CreateClassProcessor(type).Patch();
+                }
+                catch (System.Exception e)
+                {
+                    Logger.LogError($"Patch {type.Name} impossible (version du jeu différente ?) : {e.GetBaseException().Message}");
+                }
+            }
         }
 
         private void Update()
@@ -94,6 +126,27 @@ namespace SmartStations
                     new AcceptableValueRange<float>(1f, 50f)));
             AutoFillInterval = Config.Bind("RemplissageAuto", "Intervalle", 5f,
                 new ConfigDescription("Délai (secondes) entre deux remplissages.", new AcceptableValueRange<float>(1f, 60f)));
+
+            CraftFromChests = Config.Bind("Fabrication", "DepuisLesCoffres", true,
+                "Les stations de fabrication (établi, forge, chaudron...) utilisent aussi les matériaux des coffres proches. " +
+                "Désactivé tout seul si un autre mod du même genre est installé (Craft From Containers, AzuCraftyBoxes...).");
+            BuildFromChests = Config.Bind("Fabrication", "ConstructionDepuisLesCoffres", true,
+                "Le marteau (et la houe, le cultivateur) utilise aussi les matériaux des coffres proches du joueur.");
+            CraftRadius = Config.Bind("Fabrication", "Rayon", 15f,
+                new ConfigDescription("Distance maximale (m) des coffres utilisés, autour de la station (ou du joueur pour construire).",
+                    new AcceptableValueRange<float>(1f, 50f)));
+            CraftCategories = Config.Bind("Fabrication", "Categories", true,
+                "Boutons de catégories et champ de recherche à côté du menu de fabrication.");
+            UseSmartChestCategories = Config.Bind("Fabrication", "CategoriesSmartChest", true,
+                "Si Smart Chest est installé, utilise ses catégories (et tes réglages d'objets) au lieu des catégories intégrées.");
+            FilterPlacement = Config.Bind("Fabrication", "PositionCategories", BarPlacement.Droite,
+                "Où placer les boutons de catégories autour du menu de fabrication : Dessus, Dessous, Gauche, Droite.");
+            FilterOffsetX = Config.Bind("Fabrication", "DecalageX", 0f, "Décalage horizontal des catégories en pixels (positif = vers la droite).");
+            FilterOffsetY = Config.Bind("Fabrication", "DecalageY", 0f, "Décalage vertical des catégories en pixels (positif = vers le haut).");
+            FilterPlacement.SettingChanged += (_, __) => UI.CraftFilterBar.Reset();
+            FilterOffsetX.SettingChanged += (_, __) => UI.CraftFilterBar.Reset();
+            FilterOffsetY.SettingChanged += (_, __) => UI.CraftFilterBar.Reset();
+            CraftCategories.SettingChanged += (_, __) => UI.CraftFilterBar.Reset();
         }
 
         private void OnDestroy()
